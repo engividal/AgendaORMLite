@@ -4,5 +4,11 @@
     <string name="app_name">AgendaORMLite</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="nome">Nome</string>
+    <string name="telefone">Telefone</string>
+    <string name="email">E-Mail</string>
+    <string name="salvar">Salvar</string>
+    <string name="listaDeContatos">Lista de Contatos</string>
+
 
 </resources>

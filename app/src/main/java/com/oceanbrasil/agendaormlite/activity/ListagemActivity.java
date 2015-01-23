@@ -5,10 +5,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 
 import com.oceanbrasil.agendaormlite.R;
+import com.oceanbrasil.agendaormlite.helper.FormularioHelper;
 import com.oceanbrasil.agendaormlite.model.bean.Contato;
 import com.oceanbrasil.agendaormlite.model.dao.ContatoDAO;
 
@@ -25,16 +28,19 @@ public class ListagemActivity extends ActionBarActivity {
     // Tag usada para controle no LogCat
     private final String TAG = ActionBarActivity.class.getSimpleName();
 
+    // Adapter usado para exibir as Strings na ListView
+    private ArrayAdapter<String> adapter = null;
+
+    // Objeto Helper do Formulário
+    private FormularioHelper formularioHelper = null;
+
+    // Layout de exibição da listview
+    int adapterLayout = android.R.layout.simple_list_item_1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.listagemlayout);
-
-        // Layout de exibição da listview
-        int adapterLayout = android.R.layout.simple_list_item_1;
-
-        // Adapter usado para exibir as Strings na ListView
-        ArrayAdapter<String> adapter = null;
 
         // ListView que exibirá os dados do Contato
         ListView lvListagem = (ListView) findViewById(R.id.lvListagem);
@@ -42,6 +48,26 @@ public class ListagemActivity extends ActionBarActivity {
         carregarLista();
         adapter = new ArrayAdapter<String>(this, adapterLayout, listaDeContatos);
         lvListagem.setAdapter(adapter);
+
+        formularioHelper = new FormularioHelper(this);
+
+        Button btSalvar = (Button) findViewById(R.id.btSalvar);
+        btSalvar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ContatoDAO dao = new ContatoDAO(ListagemActivity.this);
+                try {
+                    dao.cadastrar(formularioHelper.getContato());
+                    carregarLista();
+                    adapter.notifyDataSetChanged();
+                    formularioHelper.setContato(new Contato());
+                } catch (SQLException e) {
+                    Log.e(TAG, "falha ao salvar Contato");
+                } finally {
+                    dao.close();
+                }
+            }
+        });
     }
 
     /**
